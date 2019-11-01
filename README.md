@@ -1,4 +1,4 @@
-Role Name
+Ansible Onion Mirror Guidelines
 =========
 
 This role allows an operator of several .onion mirrors to comply with the Dark.Fail Onion Mirrors Guidelines specification (if the specification adopts RFC 8615).
