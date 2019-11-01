@@ -1,0 +1,41 @@
+galaxy_info:
+  author: Gareth Llewellyn
+  description: Configures your various .onion mirrors with the dark.fail Onion Mirror Guidelines specification
+  company: Ablative Hosting
+
+  license: BSD-3-Clause
+
+  min_ansible_version: 2.4
+
+  platforms:
+  - name: Debian
+    versions:
+    - all
+  - name: Ubuntu
+    versions:
+    - all
+  - name: FreeBSD
+    version:
+    - all
+  - name: EL
+    versions:
+    - 6
+    - 7
+  - name: Fedora
+    versions:
+    - all
+  - name: OpenBSD
+    versions:
+    - all
+  - name: Fedora
+    versions:
+    - all
+
+  galaxy_tags:
+  - tor
+  - onion
+  - mirror
+  - omg
+
+dependencies: []
+  

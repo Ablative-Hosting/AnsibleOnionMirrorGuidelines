@@ -1,0 +1,8 @@
+---
+gpg_key_id: "gpg@example.onion"
+canary_line_one: An automated bot has confirmed this canary
+canary_line_two: An automated bot has control of this PGP key
+canary_days: 14
+temp_dir: /tmp
+remote_dir: /var/www/htdocs
+mirrors_list: [] 

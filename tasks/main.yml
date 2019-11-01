@@ -1,0 +1,99 @@
+---
+###############################
+# Local Prep
+###############################
+- name: Fail if gpg_key_id is not set
+  fail:
+    msg: "Please ensure you specify a gpg_key_id variable"
+  when: gpg_key_id == "gpg@example.onion"
+
+- name: Check some mirrors are listed
+  fail:
+    msg: "Please ensure you specify some mirrors with mirrors_list"
+  when: mirrors_list | length == 0 
+
+
+- name: Ensure the local temporary directory is clean
+  file:
+    path: "{{temp_dir}}/{{item}}"
+    state: absent
+  with_items:
+    - "mirrors_{{inventory_hostname}}.txt"
+    - "mirrors_{{inventory_hostname}}.txt.asc"
+    - "canary_{{inventory_hostname}}.txt"
+    - "canary_{{inventory_hostname}}.txt.asc"
+  delegate_to: localhost
+
+###############################
+# Remote Prep
+###############################
+- name: Create the remote .well-known folder
+  file:
+    path: "{{remote_dir}}/.well-known"
+    state: directory
+    mode: '0755'
+    
+- name: Create the remote .well-known/omg subfolder
+  file:
+    path: "{{remote_dir}}/.well-known/omg"
+    state: directory
+    mode: '0755'
+
+
+- name: Copy the the unsigned list of pgp keys from files/omg_pgp.txt to the hosts
+  copy:
+    src: files/omg_pgp.txt
+    dest: "{{remote_dir}}/.well-known/omg/pgp.txt"
+    mode: '0644'
+
+###############################
+# Mirrors
+###############################
+- name: Write out the mirrors list using the mirrors_list variable to a temporary location
+  template:
+    src: mirrors.txt.j2
+    dest: "{{temp_dir}}/mirrors_{{inventory_hostname}}.txt"
+  delegate_to: localhost
+
+- name: Sign the mirrors file
+  command: "/usr/bin/gpg2 --clear-sign --local-user {{gpg_key_id}} {{temp_dir}}/mirrors_{{inventory_hostname}}.txt"
+  register: mirrors_signed
+  delegate_to: localhost
+
+- name: Copy the signed mirrors file to the hosts
+  copy:
+    src: "{{temp_dir}}/mirrors_{{inventory_hostname}}.txt.asc"
+    dest: "{{remote_dir}}/.well-known/omg/mirrors.txt"
+    mode: '0644'
+
+###############################
+# Canary
+###############################
+- name: Get the blockchain hash
+  get_url: 
+    url: "https://blockchain.info/latestblock"
+    dest: "{{temp_dir}}/blockchain_info_{{inventory_hostname}}.json"
+  delegate_to: localhost
+
+- name: Parse the blockchain data
+  include_vars:
+    file: "{{temp_dir}}/blockchain_info_{{inventory_hostname}}.json"
+    name: blockchain
+  delegate_to: localhost
+
+- name: Write out the canary to a temporary location
+  template:
+    src: canary.txt.j2
+    dest: "{{temp_dir}}/canary_{{inventory_hostname}}.txt"
+  delegate_to: localhost
+
+- name: Sign the mirrors file
+  command: "/usr/bin/gpg2 --clear-sign --local-user {{gpg_key_id}} {{temp_dir}}/canary_{{inventory_hostname}}.txt"
+  register: canary_signed
+  delegate_to: localhost
+
+- name: Copy the signed canary file to the hosts
+  copy:
+    src: "{{temp_dir}}/canary_{{inventory_hostname}}.txt.asc"
+    dest: "{{remote_dir}}/.well-known/omg/canary.txt"
+    mode: '0644'
