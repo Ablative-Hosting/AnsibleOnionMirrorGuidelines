@@ -1,7 +1,7 @@
-{{canary_line_one | default('An automated bot has confirmed this canary') }}
-{{canary_line_two | default('An automated bot has control of this PGP key') }}
-This canary will be updated in {{canary_days | default('14') }} days
-Today is {{ansible_date_time.iso8601}}
+{{ canary_line_one | default('An automated bot has confirmed this canary') }}
+{{ canary_line_two | default('An automated bot has control of this PGP key') }}
+This canary will be updated in {{ canary_days | default('14') }} days
+Today is {{ ansible_date_time.iso8601 }}
 
 Latest bitcoin block hash:
-{{blockchain.hash | default('unknown!')}}
+{{ blockchain.hash | default('unknown!') }}
