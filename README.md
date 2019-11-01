@@ -20,9 +20,9 @@ The following variables should be changed;
 
 These variables don't need to be changed depending on your requirements;
 
-   canary_days: 14
-   temp_dir: /tmp
-   remote_dir: /var/www/htdocs
+    canary_days: 14
+    temp_dir: /tmp
+    remote_dir: /var/www/htdocs
 
 Dependencies
 ------------
